@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: www
   name: www
@@ -13,12 +12,18 @@ spec:
   strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: www
     spec:
       containers:
       - image: nginx:1.26
         name: nginx
-        resources: {}
-status: {}
+        env:
+          - name: NSPC
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: PODIP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
