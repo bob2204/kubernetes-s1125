@@ -22,9 +22,8 @@ spec:
           - name: data
             mountPath: /usr/share/nginx/html
             subPath: html
-          - name: data
+          - name: nginx-config
             mountPath: /etc/nginx/conf.d
-            subPath: nginx-config
       - image: php:8.2-fpm
         name: php
         volumeMounts:
@@ -37,3 +36,6 @@ spec:
           nfs:
             server: 172.18.0.1
             path: /
+        - name: nginx-config
+          configMap:
+            name: wwwphp
