@@ -27,13 +27,6 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
-          - name: DB
-            valueFrom:
-              configMapKeyRef:
-                name: www
-                key: DATABASE
-          - name: STAGE
-            valueFrom:
-              configMapKeyRef:
-                name: www
-                key: STAGE
+        envFrom:
+          - configMapRef:
+              name: www
