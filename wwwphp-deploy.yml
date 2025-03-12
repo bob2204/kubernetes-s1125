@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: wwwphp
+  name: wwwphp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wwwphp
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: wwwphp
+    spec:
+      containers:
+      - image: nginx:1.26
+        name: nginx
+        volumeMounts:
+          - name: html
+            mountPath: /usr/share/nginx/html
+          - name: nginx-conf
+            mountPath: /etc/nginx/conf.d
+      - image: php:8.2-fpm
+        name: php
+        volumeMounts:
+          - name: html
+            mountPath: /var/www/html
+
+      volumes:
+        - name: html
+          hostPath:
+            path: /data/html
+            type: Directory
+        - name: nginx-conf
+          hostPath:
+            path: /data/nginx-config
+            type: Directory
