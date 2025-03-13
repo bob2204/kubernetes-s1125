@@ -10,13 +10,23 @@ spec:
   selector:
     matchLabels:
       app: hello
-  strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
         app: hello
     spec:
+      initContainers:
+      - name: init-status
+        image: busybox:1.28
+        volumeMounts:
+          - name: data
+            mountPath: /mnt
+            subPath: hello-http
+        command:
+          - sh
+          - -c
+          - hostname > /mnt/status
       containers:
       - image: bob2606/hello-http:0.8.27
         name: hello-http
@@ -30,7 +40,15 @@ spec:
           periodSeconds: 5
         livenessProbe:
           httpGet:
-            path: /code/500
+            path: /healthz
             port: 80
           periodSeconds: 15
           failureThreshold: 2
+        volumeMounts:
+          - name: data
+            mountPath: /var/lib/hello-http
+            subPath: hello-http
+
+      volumes:
+        - name: data
+          emptyDir:
