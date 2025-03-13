@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: null
+  labels:
+    app: hello
+  name: hello
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello
+  serviceName: hello
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: hello
+    spec:
+      initContainers:
+      - name: init-status
+        image: busybox:1.28
+        volumeMounts:
+          - name: data
+            mountPath: /mnt
+            subPath: hello-http
+        command:
+          - sh
+          - -c
+          - |
+            nb=$(hostname|cut -d- -f2)
+            if [ $nb -eq 0 ]
+            then
+              echo "Primaire" > /mnt/status
+            else
+              echo "Secondaire n°$nb" > /mnt/status
+            fi
+      containers:
+      - image: bob2606/hello-http:0.8.27
+        name: hello-http
+        envFrom:
+          - configMapRef:
+              name: hello
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          periodSeconds: 15
+          failureThreshold: 2
+        volumeMounts:
+          - name: data
+            mountPath: /var/lib/hello-http
+            subPath: hello-http
+
+      volumes:
+        - name: data
+          emptyDir:
