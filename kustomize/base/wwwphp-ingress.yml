@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wwwphp
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: wwwphp.stage.lan
+    http:
+      paths:
+      - backend:
+          service:
+            name: wwwphp
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
