@@ -6,25 +6,23 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: hello.stage.lan
-    http:
+  - http:
       paths:
       - backend:
           service:
             name: hello
             port:
               number: 80
-        path: /
+        path: /hello
         pathType: Prefix
-  - host: wwwphp.stage.lan
-    http:
+  - http:
       paths:
       - backend:
           service:
             name: wwwphp
             port:
               number: 80
-        path: /
+        path: /wwwphp
         pathType: Prefix
 status:
   loadBalancer: {}
